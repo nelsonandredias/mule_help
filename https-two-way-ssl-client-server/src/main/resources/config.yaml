@@ -1,0 +1,7 @@
+
+# HTTPS Configuration properties
+https:
+  port: "8082"
+# HTTP Configuration properties
+http:
+  port: "8081"

@@ -1,0 +1,47 @@
+
+
+
+
+
+
+
+This example uses an two-way SSL connection.
+
+For that, we generate a keystore for the client with a public/private key pair, as well as a certificate,
+and the same for the server:
+
+keytool -genkey -alias mule-server -keyalg RSA -keystore keystore_server.jks -ext SAN=dns:localhost
+
+keytool -genkey -alias mule-client -keyalg RSA -keystore keystore_client.jks -ext SAN=dns:localhost
+
+Set a keystore password.
+
+After a few steps, export the client and server certificates, respectively:
+
+keytool -export -alias mule-server -file server.cer -keystore keystore_server.jks
+
+keytool -export -alias mule-client -file client.cer -keystore keystore_client.jks
+
+Finally, import the certificate to the client and server truststore, respectively:
+
+keytool -import -v -trustcacerts -alias mule-client -file client.cer -keystore truststore_client.ts
+
+keytool -import -v -trustcacerts -alias mule-server -file server.cer -keystore truststore_client.ts
+
+keytool -import -v -trustcacerts -alias mule-client -file client.cer -keystore truststore_server.ts
+
+keytool -import -v -trustcacerts -alias mule-server -file server.cer -keystore truststore_server.ts
+
+
+
+In this example, the client will connect the server with mutual authentication.
+
+
+A TLS-enabled server contains a private key and a public certificate:
+    - The private key never leaves the server.
+    - The public trust certificate is exposed through TLS.
+
+References:
+
+    - Mutual authentication:
+       https://dzone.com/articles/mutual-authentication-two-way-ssl-explained-using

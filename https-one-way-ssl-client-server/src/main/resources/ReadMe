@@ -1,0 +1,42 @@
+This example uses an One-way SSL connection.
+
+For that, we generate a keystore for the client with a public/private key pair, as well as a certificate:
+
+keytool -genkey -alias mule -keyalg RSA -keystore keystore_server.jks -ext SAN=dns:localhost
+
+Set a keystore password.
+
+After a few steps, export the client certificate:
+
+keytool -export -alias mule -file client.cer -keystore keystore_server.jks
+
+import the certificate to the server truststore:
+
+keytool -import -v -trustcacerts -alias mule -file client.cer -keystore truststore_client.ts
+
+
+In mulesoft, we configured a Server TLS Context with the Keystore of the server:
+    - the TLS Context configuration for the server service is part of the global.xml file
+    - the keystore (keystore_server.jks) of the server is located in the src/main/resources/keystore
+
+Keystore for the server:
+    Is a server-side asset that stores the private and public keys of the server.
+
+And we use a HTTP Request TLS Context with public trust certificate of the server:
+    - the TLS Context configuration for the client request is part of the HTTP Request
+    - the public certificate (truststore_client.ts) of the trusted server is located in the src/main/resources/keystore
+
+In this example, as the client will use a trusted certificate to connect the server,
+then the public trusted certificate must be added in the trust store element in the HTTP Request.
+
+
+A TLS-enabled server contains a private key and a public certificate:
+    - The private key never leaves the server.
+    - The public trust certificate is exposed through TLS.
+
+References:
+
+    - Generate a Keystore
+        https://docs.mulesoft.com/mule-runtime/4.1/tls-configuration
+    - Using HTTPS in mule
+        https://dzone.com/articles/using-https-in-mule

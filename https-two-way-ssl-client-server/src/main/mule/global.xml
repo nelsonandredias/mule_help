@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+	<http:listener-config name="HTTPS_Listener_Configuration" doc:name="HTTP Listener config" doc:id="1cc0aac1-4a66-49d3-9b3a-df8697ef3a65" >
+		<http:listener-connection host="localhost" port="${https.port}" protocol="HTTPS" tlsContext="TLS_Context_Server"/>
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="255c2ae0-7cb7-45ad-80ac-ee10d02aa416" file="config.yaml" />
+	<tls:context name="TLS_Context_Server" doc:name="TLS Context" doc:id="7900997d-1a3d-4e07-98b4-bc88faf1ec5a" >
+		<tls:trust-store path="keystore/truststore_server.ts" password="password" type="jks" />
+		<tls:key-store type="jks" path="keystore/keystore_server.jks" alias="mule-server" keyPassword="password" password="password" />
+	</tls:context>
+	<http:request-config name="HTTPS_Request_configuration" doc:name="HTTP Request configuration" doc:id="2f48d3e9-7006-4a0a-ae4e-dd2d3cc0a865" >
+		<http:request-connection protocol="HTTPS" host="localhost" port="${https.port}">
+			<tls:context >
+				<tls:trust-store path="keystore/truststore_client.ts" password="password" type="jks" />
+				<tls:key-store type="jks" path="keystore/keystore_client.jks" keyPassword="password" password="password" alias="mule-client"/>
+			</tls:context>
+		</http:request-connection>
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener config" doc:id="70c0ab9c-71db-4055-bf7b-b0888cc81033" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
+</mule>

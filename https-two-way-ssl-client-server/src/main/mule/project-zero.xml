@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="HTTPS_Server_TwoWay_SSL" doc:id="94d8364a-efb0-44ba-9e9b-6d08d670217e" >
+		<http:listener doc:name="HTTPS" doc:id="caf04582-3ebb-4ce7-a845-0d5b538ff3bc" config-ref="HTTPS_Listener_Configuration" path="/server/*" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Log START - HTTPS SERVER" doc:id="e7dbb688-2201-4e9b-9512-43d9c70c7b2b" message='#["Log START - HTTPS SERVER"]'/>
+		<set-payload value="#['TwoWay SSL : HTTPS - Flight Info from Serverrr ----------&gt; OK']" doc:name="Set Payload message" doc:id="28cdd8f9-4275-42e9-afad-355c50c0c567" />
+		<logger level="INFO" doc:name="Log END - HTTPS SERVER" doc:id="3e43fbef-cfd3-4369-8588-594aeaaf2f0a" message='#["Log END - HTTPS SERVER"]' />
+	</flow>
+	<flow name="HTTP_Client_TwoWay_SSL" doc:id="bde17335-f565-4580-a8bc-688e3fad2b58" >
+		<http:listener doc:name="HTTP" doc:id="72b07ed6-93cd-4830-9e29-fb6640db2b72" config-ref="HTTP_Listener_Configuration" path="/client" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Log START - HTTP CLIENT" doc:id="15130cbf-c3ed-456c-a31a-0229d4906c99" message='#["Log START - HTTP CLIENT"]' />
+		<logger level="INFO" doc:name="Logger" doc:id="0fc4741b-d034-4927-9d38-8b0d792d7332" message="#[%dw 2.0
+output application/java
+---
+attributes]"/>
+		<http:request method="GET" doc:name="Call HTTPS Server" doc:id="3c906a7a-e5d9-4067-88ba-e364f7f6a907" config-ref="HTTPS_Request_configuration" path="/server/*" sendCorrelationId="AUTO" target="serverResponse"/>
+		<set-payload value="#[vars.serverResponse]" doc:name="Set Payload with server response" doc:id="7710bc66-86a4-42cf-a058-c45318c08501" />
+		<logger level="INFO" doc:name="Log END- HTTP CLIENT" doc:id="ea342437-ea8c-4a17-a65a-a83e6f93c870" message='#["Log END - HTTP CLIENT"]' />
+	</flow>
+</mule>
